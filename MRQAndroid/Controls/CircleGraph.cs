@@ -58,7 +58,7 @@ namespace MRQAndroid.Controls
     }
 }
 
-
+//~~ OLD CODE REFACTERED ~~
 //{
 //    public class CircleGraphSection
 //    {
