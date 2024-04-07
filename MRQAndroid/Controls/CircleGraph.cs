@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui.Graphics;
+﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
 using System;
 using System.Collections.Generic;
 
@@ -11,34 +12,89 @@ namespace MRQAndroid.Controls
         public Color Color { get; set; }
     }
 
-    public class CircleGraph : GraphicsView
+    public class CircleGraph : GraphicsView, IDrawable
     {
-        public Func<List<CircleGraphSection>> DataProvider { set; get; } 
-        
+        public List<CircleGraphSection> Sections { get; set; } = new List<CircleGraphSection>();
 
-        public void DrawSections(ICanvas canvas, float width, float height, List<CircleGraphSection> sections)
+        public CircleGraph()
         {
-            float strokeWidth = 10f;
-            float radius = (Math.Min(width, height) - strokeWidth * 2) / 2;
-            float cx = width / 2;
-            float cy = height / 2;
+            Drawable = this;
+        }
 
-            var rectArc = new Rect(cx - radius, cy - radius, radius * 2, radius * 2);
+        public void Draw(ICanvas canvas, RectF dirtyRect)
+        {
+            float strokeWidth = 40f; // Adjusted for a thicker donut chart
+            float outerRadius = Math.Min(dirtyRect.Width, dirtyRect.Height) / 2;
+            float innerRadius = outerRadius - strokeWidth; // Create a donut hole
+            float centerX = dirtyRect.Width / 2;
+            float centerY = dirtyRect.Height / 2;
 
-            float startAngle = -90;  // Start from top
+            float startAngle = -90; // Starting from the top
 
-            foreach (var section in sections)
+            foreach (var section in Sections)
             {
-                canvas.StrokeColor = section.Color;
+                // Calculate sweep angle for each section
+                float sweepAngle = (section.Value / 100f) * 360; // Assuming total is 100 for simplicity
+
+                // Set paint style to stroke to draw the outline of the section
                 canvas.StrokeSize = strokeWidth;
+                canvas.StrokeColor = section.Color;
 
-                float sweepAngle = (float)section.Value / (float)100 * 360;  // calculate the sweep angle
+                // Draw the outer arc of the donut section
+                canvas.DrawArc(centerX - outerRadius, centerY - outerRadius, outerRadius * 2, outerRadius * 2, startAngle, sweepAngle, false, false);
 
-                canvas.DrawArc((float)rectArc.Left, (float)rectArc.Top, (float)rectArc.Width, (float)rectArc.Height, startAngle, sweepAngle, true, true); startAngle += sweepAngle; // incrementing startAngle for next item
+                // Optionally draw the inner arc if you want to clear the center (this creates the donut hole)
+                // You'd typically set the blend mode to clear, but this depends on the capabilities of the graphics library
+
+                // Draw labels and icons here
+                // You'll need to calculate the position for each label and icon based on the angles
+
+                startAngle += sweepAngle;
             }
+
+            // Draw the central text here
+            // Measure the text and draw it at the center of the chart
         }
     }
 }
+
+
+//{
+//    public class CircleGraphSection
+//    {
+//        public string Name { get; set; }
+//        public int Value { get; set; }
+//        public Color Color { get; set; }
+//    }
+
+//    public class CircleGraph : GraphicsView
+//    {
+//        // public Func<List<CircleGraphSection>> DataProvider { set; get; } This approach uses a delegate (Func<T>) that allows for dynamic data retrieval. It doesn't initialize the data immediately but instead provides a mechanism to fetch the data dynamically when needed.
+//        // public List<CircleGraphSection> Sections { get; set; } = new List<CircleGraphSection> ();
+
+//        public void DrawSections(ICanvas canvas, float width, float height, List<CircleGraphSection> sections)
+//        {
+//            float strokeWidth = 10f;
+//            float radius = (Math.Min(width, height) - strokeWidth * 2) / 2;
+//            float cx = width / 2;
+//            float cy = height / 2;
+
+//            var rectArc = new Rect(cx - radius, cy - radius, radius * 2, radius * 2);
+
+//            float startAngle = -90;  // Start from top
+
+//            foreach (var section in sections)
+//            {
+//                canvas.StrokeColor = section.Color;
+//                canvas.StrokeSize = strokeWidth;
+
+//                float sweepAngle = (float)section.Value / (float)100 * 360;  // calculate the sweep angle
+
+//                canvas.DrawArc((float)rectArc.Left, (float)rectArc.Top, (float)rectArc.Width, (float)rectArc.Height, startAngle, sweepAngle, true, true); startAngle += sweepAngle; // incrementing startAngle for next item
+//            }
+//        }
+//    }
+//}
 
 
 

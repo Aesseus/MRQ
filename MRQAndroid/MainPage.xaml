@@ -2,5 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:MRQAndroid.Controls"
              x:Class="MRQAndroid.MainPage">
-   
+    <ContentPage.Content>
+        <Grid BackgroundColor="#a5d6d5" RowDefinitions=".05*,.1*,*,*" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <controls:CircleGraph x:Name="circleGraph" 
+                              HeightRequest="300" 
+                              WidthRequest="300"
+                              Grid.Row="2" />
+            <!-- Other UI elements here -->
+        </Grid>
+    </ContentPage.Content>
 </ContentPage>
