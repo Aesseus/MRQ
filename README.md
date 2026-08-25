@@ -2,13 +2,13 @@
 
 A **.NET MAUI** (net8.0) app targeting Android, iOS, Mac Catalyst and Windows from one codebase.
 
-The interesting part: **`Controls/CircleGraph`** — a custom circular graph control drawn directly on the MAUI `ICanvas` via an `IDrawable`, fed by a pluggable `DataProvider` delegate. No charting library, just `Microsoft.Maui.Graphics`.
+The interesting part: **`Controls/CircleGraph`** — a custom donut-chart control that subclasses `GraphicsView`, implements `IDrawable`, and renders its sections directly to the MAUI `ICanvas`. No charting library is involved.
 
 ## Project layout
 
 ```
 MRQAndroid/
-├── Controls/            CircleGraph + CircleGraphDrawable (custom-drawn control)
+├── Controls/            CircleGraph (custom GraphicsView/IDrawable control)
 ├── Platforms/           Android · iOS · MacCatalyst · Windows · Tizen heads
 ├── AppShell.xaml        Shell-based navigation
 └── MauiProgram.cs       Host builder / DI registration
@@ -16,11 +16,17 @@ MRQAndroid/
 
 ## Building
 
+From the repository root:
+
 ```bash
-dotnet build MRQAndroid.sln -f net8.0-android
+dotnet build MRQAndroid/MRQAndroid.csproj \
+  -f net8.0-android \
+  -p:TargetFrameworks=net8.0-android
 ```
 
-Requires the .NET 8 SDK with the `maui` workload (`dotnet workload install maui`).
+Requires the .NET 8 SDK, the `maui-android` workload, JDK 17, and the Android SDK.
+`TargetFrameworks` keeps command-line builds on Linux from trying to restore the
+Apple platform heads.
 
 ## Status
 
